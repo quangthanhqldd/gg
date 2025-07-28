@@ -61,7 +61,7 @@
     let data = [];
 
     function fetchData() {
-      $.getJSON("https://raw.githubusercontent.com/quangthanhqldd/gg/refs/heads/main/gg.json", function(response) {
+    $.getJSON("https://raw.githubusercontent.com/quangthanhqldd/gg/main/gg.json", function(response) {
         data = response;
         renderTable();
       });
