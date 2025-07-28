@@ -2,16 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tra cứu dữ liệu ống</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tra cứu dữ liệu</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      margin: 20px;
     }
-    input[type="text"] {
+    input {
+      margin: 5px;
       padding: 5px;
-      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     table {
       width: 100%;
@@ -24,90 +26,103 @@
       text-align: center;
     }
     th {
-      background-color: #f2f2f2;
+      background-color: #f4f4f4;
     }
-    tr:hover {
-      background-color: #f9f9f9;
-    }
-    .summary {
-      margin-top: 10px;
+    tfoot td {
       font-weight: bold;
+      background-color: #e9e9e9;
     }
   </style>
 </head>
 <body>
-  <h2>Tra cứu dữ liệu từ JSON</h2>
-  <div>
-    <input type="text" id="filter1" placeholder="品种">
-    <input type="text" id="filter2" placeholder="口径">
-    <input type="text" id="filter3" placeholder="形式">
-    <input type="text" id="filter4" placeholder="长度">
-  </div>
+  <h2>Tra cứu dữ liệu</h2>
+  <input type="text" id="search1" placeholder="品种 (ví dụ: BXNO)">
+  <input type="text" id="search2" placeholder="口径 (ví dụ: 15)">
+  <input type="text" id="search3" placeholder="形式 (ví dụ: 31K)">
+  <input type="text" id="search4" placeholder="长度 (ví dụ: 6)">
 
-  <div class="summary">
-    Tổng 支数: <span id="totalQty">0</span> | Tổng 重量吨: <span id="totalWeight">0</span>
-  </div>
-
-  <table id="dataTable">
+  <table id="data-table">
     <thead>
       <tr>
-        <th>品种</th><th>口径</th><th>形式</th><th>长度</th><th>支数</th><th>组合</th><th>重量</th><th>重量吨</th>
+        <th>品种</th>
+        <th>口径</th>
+        <th>形式</th>
+        <th>长度</th>
+        <th>支数</th>
+        <th>组合</th>
+        <th>重量</th>
+        <th>重量吨</th>
       </tr>
     </thead>
     <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">Tổng</td>
+        <td id="sum-col5">0</td>
+        <td></td>
+        <td></td>
+        <td id="sum-col8">0</td>
+      </tr>
+    </tfoot>
   </table>
 
   <script>
-    let data = [];
+    const apiUrl = 'https://raw.githubusercontent.com/quangthanhqldd/gg/main/gg.json';
 
-    function fetchData() {
-    $.getJSON("https://raw.githubusercontent.com/quangthanhqldd/gg/main/gg.json", function(response) {
-        data = response;
-        renderTable();
-      });
-    }
+    const searchInputs = [
+      document.getElementById('search1'),
+      document.getElementById('search2'),
+      document.getElementById('search3'),
+      document.getElementById('search4')
+    ];
 
-    function renderTable() {
-      const f1 = $('#filter1').val().toLowerCase();
-      const f2 = $('#filter2').val().toLowerCase();
-      const f3 = $('#filter3').val().toLowerCase();
-      const f4 = $('#filter4').val().toLowerCase();
+    let rawData = [];
 
-      let totalQty = 0;
-      let totalWeight = 0;
-      const filtered = data.filter(row => {
-        return (!f1 || row["品种"].toLowerCase().includes(f1)) &&
-               (!f2 || row["口径"].toString().toLowerCase().includes(f2)) &&
-               (!f3 || row["形式"].toLowerCase().includes(f3)) &&
-               (!f4 || row["长度"].toString().toLowerCase().includes(f4));
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(data => {
+        rawData = data;
+        renderTable(data);
+      })
+      .catch(err => {
+        alert('Không thể tải dữ liệu: ' + err);
       });
 
-      const rows = filtered.map(row => {
-        const qty = parseFloat(row["支数"]);
-        const weight = parseFloat(row["重量吨"]);
-        totalQty += isNaN(qty) ? 0 : qty;
-        totalWeight += isNaN(weight) ? 0 : weight;
-        return `<tr>
-                  <td>${row["品种"]}</td>
-                  <td>${row["口径"]}</td>
-                  <td>${row["形式"]}</td>
-                  <td>${row["长度"]}</td>
-                  <td>${row["支数"]}</td>
-                  <td>${row["组合"]}</td>
-                  <td>${row["重量"]}</td>
-                  <td>${row["重量吨"]}</td>
-                </tr>`;
+    searchInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const filtered = rawData.filter(row =>
+          (!searchInputs[0].value || row[0].includes(searchInputs[0].value)) &&
+          (!searchInputs[1].value || row[1].toString().includes(searchInputs[1].value)) &&
+          (!searchInputs[2].value || row[2].includes(searchInputs[2].value)) &&
+          (!searchInputs[3].value || row[3].toString().includes(searchInputs[3].value))
+        );
+        renderTable(filtered);
       });
-
-      $('#dataTable tbody').html(rows.join(""));
-      $('#totalQty').text(totalQty);
-      $('#totalWeight').text(totalWeight.toFixed(3));
-    }
-
-    $(document).ready(function() {
-      fetchData();
-      $('#filter1, #filter2, #filter3, #filter4').on('input', renderTable);
     });
+
+    function renderTable(data) {
+      const tbody = document.querySelector('#data-table tbody');
+      tbody.innerHTML = '';
+
+      let sumCol5 = 0;
+      let sumCol8 = 0;
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach((cell, index) => {
+          const td = document.createElement('td');
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+
+        sumCol5 += parseFloat(row[4]) || 0;
+        sumCol8 += parseFloat(row[7]) || 0;
+      });
+
+      document.getElementById('sum-col5').textContent = sumCol5;
+      document.getElementById('sum-col8').textContent = sumCol8.toFixed(3);
+    }
   </script>
 </body>
 </html>
