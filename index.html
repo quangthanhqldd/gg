@@ -16,21 +16,26 @@
   <div class="container">
     <h3 class="mb-4">📦 钢管数据查询系统</h3>
 
-    <div class="row mb-3">
-      <div class="col-md-3">
+    <!-- Nhóm tìm kiếm -->
+    <div class="row mb-3 align-items-center">
+      <div class="col-auto">
         <input type="text" id="col1" class="form-control" placeholder="🔍 品种">
       </div>
-      <div class="col-md-3">
+      <div class="col-auto">
         <input type="text" id="col2" class="form-control" placeholder="🔍 口径">
       </div>
-      <div class="col-md-3">
+      <div class="col-auto">
         <input type="text" id="col3" class="form-control" placeholder="🔍 形式">
       </div>
-      <div class="col-md-3">
+      <div class="col-auto">
         <input type="text" id="col4" class="form-control" placeholder="🔍 长度">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-outline-secondary btn-sm" onclick="resetFilters()" title="重置">🔄</button>
       </div>
     </div>
 
+    <!-- Bảng dữ liệu -->
     <div class="table-responsive">
       <table class="table table-bordered table-hover">
         <thead class="table-dark">
@@ -78,25 +83,20 @@
 
       filteredData.forEach(item => {
         const tr = document.createElement("tr");
-
         const keys = ["品种", "口径", "形式", "长度", "支数", "重量吨"];
+
         keys.forEach(key => {
           const td = document.createElement("td");
-
-          // Nếu là cột số và = 0 thì hiển thị "-"
           if ((key === "支数" || key === "重量吨") && parseFloat(item[key]) === 0) {
             td.textContent = "-";
           } else {
             td.textContent = item[key];
           }
-
           tr.appendChild(td);
         });
 
-        // Tính tổng đúng
         totalQty += parseFloat(item["支数"]) || 0;
         totalWeight += parseFloat(item["重量吨"]) || 0;
-
         tbody.appendChild(tr);
       });
 
@@ -111,21 +111,28 @@
       const col4 = document.getElementById("col4").value.trim().toLowerCase();
 
       const filtered = data.filter(item =>
-        (!col1 || item["品种"].toString().toLowerCase().includes(col1)) &&
-        (!col2 || item["口径"].toString().toLowerCase().includes(col2)) &&
-        (!col3 || item["形式"].toString().toLowerCase().includes(col3)) &&
-        (!col4 || item["长度"].toString().toLowerCase().includes(col4))
+        (!col1 || item["品种"].toString().trim().toLowerCase() === col1) &&
+        (!col2 || item["口径"].toString().trim().toLowerCase() === col2) &&
+        (!col3 || item["形式"].toString().trim().toLowerCase() === col3) &&
+        (!col4 || item["长度"].toString().trim().toLowerCase() === col4)
       );
 
       renderTable(filtered);
     }
 
-    // Gắn sự kiện nhập liệu
+    function resetFilters() {
+      document.getElementById("col1").value = "";
+      document.getElementById("col2").value = "";
+      document.getElementById("col3").value = "";
+      document.getElementById("col4").value = "";
+      renderTable(data);
+    }
+
+    // Tự động lọc khi nhập
     document.querySelectorAll("input").forEach(input => {
       input.addEventListener("input", filterData);
     });
 
-    // Gọi dữ liệu ban đầu
     fetchData();
   </script>
 </body>
