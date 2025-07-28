@@ -1,123 +1,113 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>数据查询界面</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Tra cứu dữ liệu ống</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input[type="text"] {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    .summary {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 p-6">
-  <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
-    <h1 class="text-2xl font-bold mb-4 text-center">数据查询界面</h1>
-
-    <!-- Filters -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-      <input type="text" placeholder="查找品种" id="filterPinzhong" class="p-2 border rounded">
-      <input type="text" placeholder="查找口径" id="filterKoujing" class="p-2 border rounded">
-      <input type="text" placeholder="查找形式" id="filterXingshi" class="p-2 border rounded">
-      <input type="text" placeholder="查找组合" id="filterZuhe" class="p-2 border rounded">
-    </div>
-
-    <!-- Table -->
-    <div class="overflow-x-auto">
-      <table class="table-auto w-full border-collapse border border-gray-300">
-        <thead class="bg-blue-100">
-          <tr>
-            <th class="border px-4 py-2">品种</th>
-            <th class="border px-4 py-2">口径</th>
-            <th class="border px-4 py-2">形式</th>
-            <th class="border px-4 py-2">组合</th>
-            <th class="border px-4 py-2">长度</th>
-            <th class="border px-4 py-2">单重</th>
-            <th class="border px-4 py-2">支数</th>
-            <th class="border px-4 py-2">重量</th>
-          </tr>
-        </thead>
-        <tbody id="dataTable" class="text-center">
-          <!-- Sample 20 rows -->
-          <tr class="border"><td class="border">BN</td><td class="border">15</td><td class="border">342</td><td class="border">BN15342</td><td class="border">6</td><td class="border">1.27</td><td class="border">1270</td><td class="border">9677.4</td></tr>
-          <tr class="border"><td class="border">GN</td><td class="border">20</td><td class="border">374</td><td class="border">GN20374</td><td class="border">5.8</td><td class="border">1.65</td><td class="border">352</td><td class="border">3368.64</td></tr>
-          <tr class="border"><td class="border">BNO</td><td class="border">25</td><td class="border">36Y</td><td class="border">BNO2536Y</td><td class="border">6</td><td class="border">2.54</td><td class="border">1690</td><td class="border">25755.6</td></tr>
-          <tr class="border"><td class="border">BXNO</td><td class="border">32</td><td class="border">383</td><td class="border">BXNO32383</td><td class="border">6</td><td class="border">3.25</td><td class="border">800</td><td class="border">26000</td></tr>
-          <tr class="border"><td class="border">BN</td><td class="border">40</td><td class="border">342</td><td class="border">BN40342</td><td class="border">6</td><td class="border">4.1</td><td class="border">500</td><td class="border">20500</td></tr>
-          <tr class="border"><td class="border">GN</td><td class="border">50</td><td class="border">374</td><td class="border">GN50374</td><td class="border">6</td><td class="border">5.8</td><td class="border">400</td><td class="border">23200</td></tr>
-          <tr class="border"><td class="border">BNO</td><td class="border">60</td><td class="border">36Y</td><td class="border">BNO6036Y</td><td class="border">6</td><td class="border">6.5</td><td class="border">300</td><td class="border">19500</td></tr>
-          <tr class="border"><td class="border">BXNO</td><td class="border">70</td><td class="border">383</td><td class="border">BXNO70383</td><td class="border">6</td><td class="border">7.1</td><td class="border">280</td><td class="border">19880</td></tr>
-          <tr class="border"><td class="border">BN</td><td class="border">80</td><td class="border">342</td><td class="border">BN80342</td><td class="border">6</td><td class="border">8.2</td><td class="border">260</td><td class="border">21320</td></tr>
-          <tr class="border"><td class="border">GN</td><td class="border">90</td><td class="border">374</td><td class="border">GN90374</td><td class="border">6</td><td class="border">9.3</td><td class="border">240</td><td class="border">22320</td></tr>
-          <tr class="border"><td class="border">BNO</td><td class="border">100</td><td class="border">36Y</td><td class="border">BNO10036Y</td><td class="border">6</td><td class="border">10.5</td><td class="border">220</td><td class="border">23100</td></tr>
-          <tr class="border"><td class="border">BXNO</td><td class="border">110</td><td class="border">383</td><td class="border">BXNO110383</td><td class="border">6</td><td class="border">11.6</td><td class="border">200</td><td class="border">23200</td></tr>
-          <tr class="border"><td class="border">BN</td><td class="border">120</td><td class="border">342</td><td class="border">BN120342</td><td class="border">6</td><td class="border">12.4</td><td class="border">190</td><td class="border">23560</td></tr>
-          <tr class="border"><td class="border">GN</td><td class="border">130</td><td class="border">374</td><td class="border">GN130374</td><td class="border">6</td><td class="border">13.3</td><td class="border">180</td><td class="border">23940</td></tr>
-          <tr class="border"><td class="border">BNO</td><td class="border">140</td><td class="border">36Y</td><td class="border">BNO14036Y</td><td class="border">6</td><td class="border">14.1</td><td class="border">170</td><td class="border">23970</td></tr>
-          <tr class="border"><td class="border">BXNO</td><td class="border">150</td><td class="border">383</td><td class="border">BXNO150383</td><td class="border">6</td><td class="border">15.0</td><td class="border">160</td><td class="border">24000</td></tr>
-          <tr class="border"><td class="border">BN</td><td class="border">160</td><td class="border">342</td><td class="border">BN160342</td><td class="border">6</td><td class="border">15.8</td><td class="border">150</td><td class="border">23700</td></tr>
-          <tr class="border"><td class="border">GN</td><td class="border">170</td><td class="border">374</td><td class="border">GN170374</td><td class="border">6</td><td class="border">16.7</td><td class="border">140</td><td class="border">23380</td></tr>
-          <tr class="border"><td class="border">BNO</td><td class="border">180</td><td class="border">36Y</td><td class="border">BNO18036Y</td><td class="border">6</td><td class="border">17.5</td><td class="border">130</td><td class="border">22750</td></tr>
-          <tr class="border"><td class="border">BXNO</td><td class="border">190</td><td class="border">383</td><td class="border">BXNO190383</td><td class="border">6</td><td class="border">18.4</td><td class="border">120</td><td class="border">22080</td></tr>
-        </tbody>
-        <tfoot>
-          <tr class="bg-yellow-100 font-bold">
-            <td colspan="6" class="border px-4 py-2 text-right">总计：</td>
-            <td class="border px-4 py-2 text-center" id="totalZhiShu">0</td>
-            <td class="border px-4 py-2 text-center" id="totalZhongliang">0</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
+<body>
+  <h2>Tra cứu dữ liệu từ JSON</h2>
+  <div>
+    <input type="text" id="filter1" placeholder="品种">
+    <input type="text" id="filter2" placeholder="口径">
+    <input type="text" id="filter3" placeholder="形式">
+    <input type="text" id="filter4" placeholder="长度">
   </div>
 
+  <div class="summary">
+    Tổng 支数: <span id="totalQty">0</span> | Tổng 重量吨: <span id="totalWeight">0</span>
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>品种</th><th>口径</th><th>形式</th><th>长度</th><th>支数</th><th>组合</th><th>重量</th><th>重量吨</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
   <script>
-    const filters = {
-      pinzhong: document.getElementById('filterPinzhong'),
-      koujing: document.getElementById('filterKoujing'),
-      xingshi: document.getElementById('filterXingshi'),
-      zuhe: document.getElementById('filterZuhe')
-    };
+    let data = [];
 
-    const table = document.getElementById('dataTable');
-    const rows = Array.from(table.getElementsByTagName('tr'));
-    const totalZhiShuCell = document.getElementById('totalZhiShu');
-    const totalZhongliangCell = document.getElementById('totalZhongliang');
-
-    function applyFilters() {
-      let totalZhiShu = 0;
-      let totalZhongliang = 0;
-
-      const filterValues = {
-        pinzhong: filters.pinzhong.value.toLowerCase(),
-        koujing: filters.koujing.value.toLowerCase(),
-        xingshi: filters.xingshi.value.toLowerCase(),
-        zuhe: filters.zuhe.value.toLowerCase()
-      };
-
-      rows.forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        const match = 
-          (filterValues.pinzhong === "" || cells[0].innerText.toLowerCase().includes(filterValues.pinzhong)) &&
-          (filterValues.koujing === "" || cells[1].innerText.toLowerCase().includes(filterValues.koujing)) &&
-          (filterValues.xingshi === "" || cells[2].innerText.toLowerCase().includes(filterValues.xingshi)) &&
-          (filterValues.zuhe === "" || cells[3].innerText.toLowerCase().includes(filterValues.zuhe));
-
-        if (match) {
-          row.style.display = '';
-          const zhiShu = parseFloat(cells[6].innerText);
-          const zhongliang = parseFloat(cells[7].innerText);
-          if (!isNaN(zhiShu)) totalZhiShu += zhiShu;
-          if (!isNaN(zhongliang)) totalZhongliang += zhongliang;
-        } else {
-          row.style.display = 'none';
-        }
+    function fetchData() {
+      $.getJSON("https://raw.githubusercontent.com/quangthanhqldd/gg/refs/heads/main/gg.json", function(response) {
+        data = response;
+        renderTable();
       });
-
-      totalZhiShuCell.innerText = totalZhiShu.toLocaleString();
-      totalZhongliangCell.innerText = totalZhongliang.toLocaleString();
     }
 
-    Object.values(filters).forEach(input => {
-      input.addEventListener('input', applyFilters);
-    });
+    function renderTable() {
+      const f1 = $('#filter1').val().toLowerCase();
+      const f2 = $('#filter2').val().toLowerCase();
+      const f3 = $('#filter3').val().toLowerCase();
+      const f4 = $('#filter4').val().toLowerCase();
 
-    applyFilters();
+      let totalQty = 0;
+      let totalWeight = 0;
+      const filtered = data.filter(row => {
+        return (!f1 || row["品种"].toLowerCase().includes(f1)) &&
+               (!f2 || row["口径"].toString().toLowerCase().includes(f2)) &&
+               (!f3 || row["形式"].toLowerCase().includes(f3)) &&
+               (!f4 || row["长度"].toString().toLowerCase().includes(f4));
+      });
+
+      const rows = filtered.map(row => {
+        const qty = parseFloat(row["支数"]);
+        const weight = parseFloat(row["重量吨"]);
+        totalQty += isNaN(qty) ? 0 : qty;
+        totalWeight += isNaN(weight) ? 0 : weight;
+        return `<tr>
+                  <td>${row["品种"]}</td>
+                  <td>${row["口径"]}</td>
+                  <td>${row["形式"]}</td>
+                  <td>${row["长度"]}</td>
+                  <td>${row["支数"]}</td>
+                  <td>${row["组合"]}</td>
+                  <td>${row["重量"]}</td>
+                  <td>${row["重量吨"]}</td>
+                </tr>`;
+      });
+
+      $('#dataTable tbody').html(rows.join(""));
+      $('#totalQty').text(totalQty);
+      $('#totalWeight').text(totalWeight.toFixed(3));
+    }
+
+    $(document).ready(function() {
+      fetchData();
+      $('#filter1, #filter2, #filter3, #filter4').on('input', renderTable);
+    });
   </script>
 </body>
 </html>
